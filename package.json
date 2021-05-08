@@ -10,6 +10,14 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@carbon/charts": "^0.41.62",
+    "@carbon/charts-react": "^0.41.62",
+    "@carbon/icons-react": "10.22.0",
+    "@types/d3": "5.0",
+    "carbon-components": "10.25.0",
+    "carbon-components-react": "7.25.0",
+    "carbon-icons": "7.0.7",
+    "d3": "5.x",
     "next": "10.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

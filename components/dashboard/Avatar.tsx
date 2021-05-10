@@ -17,8 +17,8 @@ const StyledAvatar = styled(MuiAvatar)`
 `;
 
 export const Avatar: React.FC<AvatarProps> = ({
-  username,
-  profilePictureURL,
+  username = "roboMan",
+  profilePictureURL = null,
 }) => {
   return <StyledAvatar alt={username} src={profilePictureURL} />;
 };

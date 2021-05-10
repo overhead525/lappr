@@ -1,7 +1,10 @@
 import { Avatar as MuiAvatar } from "@material-ui/core";
 import styled from "styled-components";
 
-export interface AvatarProps {}
+export interface AvatarProps {
+  username: string;
+  profilePictureURL: string; // URL to image hosted on s3
+}
 
 const StyledAvatar = styled(MuiAvatar)`
   transition: filter 0.25s;
@@ -13,6 +16,9 @@ const StyledAvatar = styled(MuiAvatar)`
   }
 `;
 
-export const Avatar: React.FC<AvatarProps> = ({}) => {
-  return <StyledAvatar />;
+export const Avatar: React.FC<AvatarProps> = ({
+  username,
+  profilePictureURL,
+}) => {
+  return <StyledAvatar alt={username} src={profilePictureURL} />;
 };

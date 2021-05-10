@@ -23,7 +23,7 @@ const StyledPodium = styled.div`
   background-color: #2266ff;
   text-align: center;
   padding-top: 1vw;
-  font-size: 2vw;
+  font-size: 3.5vw;
   font-weight: 700;
   font-family: "Inter", sans-serif;
   color: #ffffff;
@@ -50,7 +50,7 @@ const StyledAvatarWrapper = styled.div`
 
 const StyledStage = styled.div`
   width: 100%;
-  height: 40vw;
+  height: 52vw;
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;

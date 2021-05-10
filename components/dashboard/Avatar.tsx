@@ -9,6 +9,8 @@ export interface AvatarProps {
 const StyledAvatar = styled(MuiAvatar)`
   transition: filter 0.25s;
   transition: transform 0.25s;
+  width: 8.5vw !important;
+  height: 8.5vw !important;
 
   &:hover {
     filter: brightness(50%);

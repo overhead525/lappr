@@ -13,6 +13,7 @@
     "@carbon/charts": "^0.41.62",
     "@carbon/charts-react": "^0.41.62",
     "@carbon/icons-react": "10.22.0",
+    "@material-ui/core": "^4.11.4",
     "@types/d3": "5.0",
     "carbon-components": "10.25.0",
     "carbon-components-react": "7.25.0",

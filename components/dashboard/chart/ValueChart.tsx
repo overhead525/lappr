@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { LineChart } from "@carbon/charts-react";
-import { LineChartOptions, ScaleTypes } from "@carbon/charts/interfaces";
 import { min, max, pointers } from "d3";
 import "@carbon/charts/styles.css";
 import { useEffect, useState } from "react";
@@ -18,7 +17,6 @@ export interface ValueChartProps {
 }
 
 const StyledValueChartWrapper = styled.div`
-  width: 100%;
   margin-bottom: 2.81rem;
   border-radius: 6px;
   background-color: white;
@@ -56,19 +54,19 @@ export const ValueChart: React.FC<ValueChartProps> = ({
   const dataMin = min(data.map((obj) => obj.value));
   const dataMax = max(data.map((obj) => obj.value));
 
-  const options: LineChartOptions = {
+  const options = {
     title: null,
     axes: {
       bottom: {
         title: `Your ${symbol} Portfolio History`,
         mapsTo: "date",
-        scaleType: ScaleTypes.TIME,
-        visible: false,
+        scaleType: "time",
+        visible: true,
       },
       left: {
         title: "Value ($)",
         mapsTo: "value",
-        scaleType: ScaleTypes.LINEAR,
+        scaleType: "linear",
         visible: false,
         domain: [dataMin - 1000, dataMax + 1000],
       },
@@ -86,8 +84,8 @@ export const ValueChart: React.FC<ValueChartProps> = ({
       },
     },
     curve: "curveMonotoneX",
-    height: "40vh",
-    width: "80%",
+    height: "32vh",
+    width: "100%",
     legend: {
       enabled: false,
     },
@@ -157,6 +155,7 @@ export const ValueChart: React.FC<ValueChartProps> = ({
 
   return (
     <StyledValueChartWrapper>
+      {/*@ts-ignore*/}
       <LineChart data={data} options={options} />
     </StyledValueChartWrapper>
   );

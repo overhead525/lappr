@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+
+import Worker from "worker-loader!../../public/worker";
 
 export interface SymbolHeaderProps {
   symbol: string;
-  price: number;
   theme: "light" | "dark";
 }
 
@@ -30,10 +32,24 @@ const StyledSymbolHeaderContentWrapper = styled.div`
 
 export const SymbolHeader: React.FC<SymbolHeaderProps> = ({
   symbol,
-  price,
   theme,
 }) => {
+  const [price, setPrice] = useState(50000);
   const parsedPrice: string = "$" + price.toLocaleString();
+
+  useEffect(() => {
+    const worker = new Worker();
+
+    window.addEventListener("click", (e) => {
+      worker.postMessage("User just clicked in the window");
+      console.log("message posted to worker");
+    });
+
+    worker.onmessage = (e) => {
+      console.log("Message received from worker", e.data);
+      setPrice(JSON.parse(e.data).price);
+    };
+  }, []);
 
   return (
     <StyledSymbolHeaderContentWrapper theme={theme}>

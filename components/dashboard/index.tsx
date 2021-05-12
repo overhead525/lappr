@@ -1,6 +1,6 @@
-import { Paper } from "@material-ui/core";
-import { useState } from "react";
 import styled from "styled-components";
+
+import { useState } from "react";
 
 import { ActionsMenu, ActionsMenuProps } from "./ActionsMenu";
 import { Avatar, AvatarProps } from "./Avatar";
@@ -24,7 +24,6 @@ interface StateTypes extends SymbolHeaderProps, ValueChartProps, StageProps {}
 const Dashboard: React.FC<DashboardProps> = () => {
   const [state, setState] = useState({
     symbol: "BTC-USD",
-    price: 55348.23,
     theme: "dark",
     data: mockData,
     originalValue: 39000,
@@ -39,11 +38,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   return (
     <StyledDashboardWrapper>
-      <SymbolHeader
-        symbol={state.symbol}
-        price={state.price}
-        theme={state.theme}
-      />
+      <SymbolHeader symbol={state.symbol} theme={state.theme} />
       <ValueChart
         data={state.data}
         originalValue={state.originalValue}

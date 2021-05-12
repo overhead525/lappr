@@ -31,7 +31,7 @@ const toSend = {
   channels: [
     {
       name: "ticker",
-      product_ids: ["ETH-USD"],
+      product_ids: ["BTC-USD"],
     },
   ],
 };

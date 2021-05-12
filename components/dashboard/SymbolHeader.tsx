@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import Worker from "worker-loader!../../public/worker";
+import Worker from "worker-loader!../../workers/coinbase-socket-worker";
 
 export interface SymbolHeaderProps {
   symbol: string;
@@ -30,12 +30,18 @@ const StyledSymbolHeaderContentWrapper = styled.div`
   }
 `;
 
+const StyledPriceHeader = styled.h1`
+  @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap");
+
+  font-family: "Roboto Mono", monospace;
+`;
+
 export const SymbolHeader: React.FC<SymbolHeaderProps> = ({
   symbol,
   theme,
 }) => {
   const [price, setPrice] = useState(50000);
-  const parsedPrice: string = "$" + price.toLocaleString();
+  const parsedPrice: string = "$" + price.toFixed(2).toLocaleString();
 
   useEffect(() => {
     const worker = new Worker();
@@ -54,7 +60,7 @@ export const SymbolHeader: React.FC<SymbolHeaderProps> = ({
   return (
     <StyledSymbolHeaderContentWrapper theme={theme}>
       <h1>{symbol}</h1>
-      <h1>{parsedPrice}</h1>
+      <StyledPriceHeader>{parsedPrice}</StyledPriceHeader>
     </StyledSymbolHeaderContentWrapper>
   );
 };

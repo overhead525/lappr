@@ -10,6 +10,8 @@ export const StyledPriceDisplayWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-content: flex-start;
+
+  margin-bottom: 1vw;
 `;
 
 export const StyledDollarSign = styled.div`

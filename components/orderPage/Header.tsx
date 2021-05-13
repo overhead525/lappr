@@ -9,6 +9,9 @@ const StyledHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  margin-bottom: 16.8vw;
+  margin-top: 6.8vw;
 `;
 const StyledSymbolText = styled.div`
   @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");

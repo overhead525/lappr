@@ -13,6 +13,7 @@ const StyledSymbolDisplay = styled.div`
 
   width: 43.8vw;
   height: 43.8vw;
+  margin-bottom: 9vw;
 
   background-color: #121212;
   border-radius: 2vw;

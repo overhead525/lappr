@@ -1,7 +1,6 @@
-import styled from "styled-components";
-
 import { useState } from "react";
 
+import { StyledScreenWrapper } from "../shared/layout";
 import { ActionsMenu, ActionsMenuProps } from "./ActionsMenu";
 import { Avatar, AvatarProps } from "./Avatar";
 import { Stage, StageProps, Podium } from "./Podium";
@@ -12,12 +11,6 @@ import { ValueChartExample } from "../../stories/ValueChart.stories";
 import mockData from "../../mockData/valueChartData";
 
 export interface DashboardProps {}
-
-export const StyledDashboardWrapper = styled.div`
-  max-width: 1000px;
-  background-color: #121212;
-  padding: 0 3vw;
-`;
 
 interface StateTypes extends SymbolHeaderProps, ValueChartProps, StageProps {}
 
@@ -37,7 +30,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   } as StateTypes);
 
   return (
-    <StyledDashboardWrapper>
+    <StyledScreenWrapper>
       <SymbolHeader symbol={state.symbol} theme={state.theme} />
       <ValueChart
         data={state.data}
@@ -46,7 +39,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
       />
       <Stage podiums={state.podiums} />
       <ActionsMenu />
-    </StyledDashboardWrapper>
+    </StyledScreenWrapper>
   );
 };
 

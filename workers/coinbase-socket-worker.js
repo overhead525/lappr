@@ -1,5 +1,7 @@
 import moment from "moment";
 
+let marker = moment();
+
 console.log(`From worker: worker started at ${moment().format("HH:mm:ss")}`);
 
 function waitForSocketConnection(socket, callback) {
@@ -41,6 +43,12 @@ sendMessage(JSON.stringify(toSend));
 coinbaseSocket.onmessage = function (e) {
   const price = parseFloat(JSON.parse(e.data).price);
   if (price) postMessage(JSON.stringify({ price }));
+
+  const now = moment();
+  if (now - marker >= 5000) {
+    console.log(`New marker set at ${now.format("hh:mm:ss")}`);
+    marker = now;
+  }
 };
 
 onmessage = function (e) {

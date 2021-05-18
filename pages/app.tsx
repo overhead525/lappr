@@ -1,6 +1,10 @@
 import Dashboard from "../components/dashboard";
+import { useSelector } from "react-redux";
+import { currentScreenSelector } from "../features/screen/screenSlice";
 
 const App = () => {
+  const currentScreen = useSelector(currentScreenSelector);
+
   return (
     <div
       style={{
@@ -14,7 +18,7 @@ const App = () => {
         placeItems: "center",
       }}
     >
-      <Dashboard />
+      {currentScreen ? currentScreen : <Dashboard />}
     </div>
   );
 };

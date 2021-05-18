@@ -2,6 +2,8 @@ import moment from "moment";
 
 let marker = moment();
 
+const tickerChannel = new BroadcastChannel("ticker");
+
 console.log(`From worker: worker started at ${moment().format("HH:mm:ss")}`);
 
 function waitForSocketConnection(socket, callback) {
@@ -42,7 +44,10 @@ sendMessage(JSON.stringify(toSend));
 
 coinbaseSocket.onmessage = function (e) {
   const price = parseFloat(JSON.parse(e.data).price);
-  if (price) postMessage(JSON.stringify({ price }));
+  if (price)
+    tickerChannel.postMessage(
+      JSON.stringify({ from: "coinbase-socket-worker", price })
+    );
 
   const now = moment();
   if (now - marker >= 5000) {
@@ -51,7 +56,7 @@ coinbaseSocket.onmessage = function (e) {
   }
 };
 
-onmessage = function (e) {
+tickerChannel.onmessage = function (e) {
   console.log("Worker: Message received from main script");
   this.postMessage("sent back from worker");
 };

@@ -46,12 +46,17 @@ export const SymbolHeader: React.FC<SymbolHeaderProps> = ({
   useEffect(() => {
     const worker = new Worker();
 
+    const tickerChannel = new BroadcastChannel("ticker");
+
     window.addEventListener("click", (e) => {
-      worker.postMessage("User just clicked in the window");
+      tickerChannel.postMessage({
+        from: "SymbolHeader",
+        message: "User just clicked in the window",
+      });
       console.log("message posted to worker");
     });
 
-    worker.onmessage = (e) => {
+    tickerChannel.onmessage = (e) => {
       console.log("Message received from worker", e.data);
       setPrice(JSON.parse(e.data).price);
     };

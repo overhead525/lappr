@@ -4,6 +4,7 @@ import { StyledScreenWrapper } from "../shared/layout";
 import { symbolDisplays } from "../shared/components";
 import { Header } from "./Header";
 import { PriceDisplay } from "./PriceDisplay";
+import { TickerChart, TickerChartTypes } from "./TickerChart";
 
 export interface OrderPageProps {}
 
@@ -22,6 +23,7 @@ export const OrderPage: React.FC<OrderPageProps> = () => {
       <Header symbol={state.symbol} />
       {symbolDisplays[state.symbol]}
       <PriceDisplay />
+      <TickerChart type={TickerChartTypes.candles} symbol="BTC-USD" />
     </StyledOrderPageWrapper>
   );
 };

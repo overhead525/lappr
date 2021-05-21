@@ -36,34 +36,37 @@ export interface TickerChartProps {
   symbol: string;
 }
 
-const findMaxOfCandlestickDataArray = (
-  candlestickDataArr: CandlestickData[]
-): {
+type Coordinate = {
   x: number;
   y: number;
-} => {
+};
+
+const findMaxOfCandlestickDataArray = (
+  candlestickDataArr: CandlestickData[]
+): Coordinate => {
   const maxPriceInPeriod = Math.max(...candlestickDataArr.map((cD) => cD[2]));
   const indexOfMax = candlestickDataArr.findIndex(
     (cD) => cD[2] === maxPriceInPeriod
   );
   const xCoord = candlestickDataArr[indexOfMax][0];
 
-  return { x: xCoord, y: maxPriceInPeriod };
+  const coords = { x: xCoord, y: maxPriceInPeriod };
+  console.log(coords);
+  return coords;
 };
 
 const findMinOfCandlestickDataArray = (
   candlestickDataArr: CandlestickData[]
-): {
-  x: number;
-  y: number;
-} => {
+): Coordinate => {
   const minPriceInPeriod = Math.min(...candlestickDataArr.map((cD) => cD[2]));
   const indexOfMin = candlestickDataArr.findIndex(
     (cD) => cD[2] === minPriceInPeriod
   );
   const xCoord = candlestickDataArr[indexOfMin][0];
 
-  return { x: xCoord, y: minPriceInPeriod };
+  const coords = { x: xCoord, y: minPriceInPeriod };
+  console.log(coords);
+  return coords;
 };
 
 export const TickerChart: React.FC<TickerChartProps> = ({
@@ -112,7 +115,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
             },
             label: {
               borderColor: "none",
-              text: "Bruh",
+              text: "Min",
               style: {
                 color: "#FFFFFF",
                 background: "none",
@@ -135,6 +138,8 @@ export const TickerChart: React.FC<TickerChartProps> = ({
     setData(cData);
   };
 
+  useEffect(() => {}, [data]);
+
   useEffect(() => {
     !data && loadTickerData();
   }, []);
@@ -146,7 +151,6 @@ export const TickerChart: React.FC<TickerChartProps> = ({
 
     const channelLogic = () => {
       const now = moment();
-      console.log("message sent to coinbase-http-worker");
       candlestickChannel.postMessage(
         JSON.stringify({
           from: "tickerChart",

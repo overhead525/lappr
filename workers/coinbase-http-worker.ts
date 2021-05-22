@@ -3,7 +3,11 @@ import {
   CandlestickChannelData,
   CandlestickMessageData,
 } from "../components/orderPage/TickerChart";
-import { fetchSymbolHistory } from "../components/shared/requests";
+import {
+  fetchSymbolHistory,
+  findMaxOfCandlestickDataArray,
+  findMinOfCandlestickDataArray,
+} from "../components/shared/requests";
 
 const candlestickChannel = new BroadcastChannel("candlestick");
 

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { CandlestickData } from "../orderPage/TickerChart";
+import { CandlestickData, Coordinate } from "../orderPage/TickerChart";
 import axios, { AxiosResponse } from "axios";
 
 /**
@@ -97,6 +97,34 @@ const intervals: {
   },
 };
 
+export const findMaxOfCandlestickDataArray = (
+  candlestickDataArr: CandlestickData[]
+): Coordinate => {
+  const maxPriceInPeriod = Math.max(...candlestickDataArr.map((cD) => cD[2]));
+  const indexOfMax = candlestickDataArr.findIndex(
+    (cD) => cD[2] === maxPriceInPeriod
+  );
+  const xCoord = candlestickDataArr[indexOfMax][0];
+
+  const coords = { x: xCoord, y: maxPriceInPeriod };
+  console.log(coords);
+  return coords;
+};
+
+export const findMinOfCandlestickDataArray = (
+  candlestickDataArr: CandlestickData[]
+): Coordinate => {
+  const minPriceInPeriod = Math.min(...candlestickDataArr.map((cD) => cD[2]));
+  const indexOfMin = candlestickDataArr.findIndex(
+    (cD) => cD[2] === minPriceInPeriod
+  );
+  const xCoord = candlestickDataArr[indexOfMin][0];
+
+  const coords = { x: xCoord, y: minPriceInPeriod };
+  console.log(coords);
+  return coords;
+};
+
 /**
  * Sends an HTTP Request to Coinbase Pro API to retrieve
  * historic data on a particular symbol.
@@ -104,7 +132,7 @@ const intervals: {
 export const fetchSymbolHistory = async (
   symbol: string,
   interval: string
-): Promise<CandlestickData[]> => {
+): Promise<{ data: CandlestickData[]; min: Coordinate; max: Coordinate }> => {
   try {
     const now = moment();
     const intervalObject = intervals[interval];
@@ -152,9 +180,17 @@ export const fetchSymbolHistory = async (
 
     const result = response.data.map((grain) => formatCandlestickData(grain));
 
-    return result as CandlestickData[];
+    return {
+      data: result,
+      min: findMinOfCandlestickDataArray(result),
+      max: findMaxOfCandlestickDataArray(result),
+    } as {
+      data: CandlestickData[];
+      min: Coordinate;
+      max: Coordinate;
+    };
   } catch (error) {
     console.error(error);
-    return null as CandlestickData[];
+    return null;
   }
 };

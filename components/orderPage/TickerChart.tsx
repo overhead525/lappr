@@ -2,6 +2,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Chart from "react-apexcharts";
+import "./orderPageStyles.css";
 
 // @ts-ignore
 import Worker from "worker-loader!../../workers/coinbase-http-worker";
@@ -22,7 +23,11 @@ export interface CandlestickMessageData {
 
 export interface CandlestickChannelData {
   from: string;
-  data: CandlestickData[];
+  data: {
+    data: CandlestickData[];
+    min: Coordinate;
+    max: Coordinate;
+  };
   time: string; // ISO Format
 }
 
@@ -36,37 +41,9 @@ export interface TickerChartProps {
   symbol: string;
 }
 
-type Coordinate = {
+export type Coordinate = {
   x: number;
   y: number;
-};
-
-const findMaxOfCandlestickDataArray = (
-  candlestickDataArr: CandlestickData[]
-): Coordinate => {
-  const maxPriceInPeriod = Math.max(...candlestickDataArr.map((cD) => cD[2]));
-  const indexOfMax = candlestickDataArr.findIndex(
-    (cD) => cD[2] === maxPriceInPeriod
-  );
-  const xCoord = candlestickDataArr[indexOfMax][0];
-
-  const coords = { x: xCoord, y: maxPriceInPeriod };
-  console.log(coords);
-  return coords;
-};
-
-const findMinOfCandlestickDataArray = (
-  candlestickDataArr: CandlestickData[]
-): Coordinate => {
-  const minPriceInPeriod = Math.min(...candlestickDataArr.map((cD) => cD[2]));
-  const indexOfMin = candlestickDataArr.findIndex(
-    (cD) => cD[2] === minPriceInPeriod
-  );
-  const xCoord = candlestickDataArr[indexOfMin][0];
-
-  const coords = { x: xCoord, y: minPriceInPeriod };
-  console.log(coords);
-  return coords;
 };
 
 export const TickerChart: React.FC<TickerChartProps> = ({
@@ -106,24 +83,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
         show: false,
       },
       annotations: {
-        points: [
-          {
-            x: 1621609500,
-            y: 37471.51,
-            marker: {
-              size: 0,
-            },
-            label: {
-              borderColor: "none",
-              text: "Min",
-              style: {
-                color: "#FFFFFF",
-                background: "none",
-                border: "none",
-              },
-            },
-          },
-        ],
+        points: [],
       },
     },
   });
@@ -135,10 +95,53 @@ export const TickerChart: React.FC<TickerChartProps> = ({
 
   const loadTickerData = async () => {
     const cData = await fetchSymbolHistory(symbol, "1m");
-    setData(cData);
+    setData(cData.data);
+    setChartState({
+      options: {
+        ...chartState.options,
+        annotations: {
+          ...chartState.options.annotations,
+          points: [
+            {
+              x: cData.min.x,
+              y: cData.min.y,
+              marker: {
+                size: 0,
+              },
+              label: {
+                borderColor: "none",
+                text: `$${cData.min.y.toLocaleString()}`,
+                style: {
+                  color: "#FFFFFF",
+                  cssClass: "candlestick-chart-annotation-label",
+                  background: "none",
+                  border: "none",
+                },
+                offsetY: 43,
+              },
+            },
+            {
+              x: cData.max.x,
+              y: cData.max.y,
+              marker: {
+                size: 0,
+              },
+              label: {
+                borderColor: "none",
+                text: `$${cData.max.y.toLocaleString()}`,
+                style: {
+                  color: "#FFFFFF",
+                  cssClass: "candlestick-chart-annotation-label",
+                  background: "none",
+                  border: "none",
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
   };
-
-  useEffect(() => {}, [data]);
 
   useEffect(() => {
     !data && loadTickerData();
@@ -164,7 +167,52 @@ export const TickerChart: React.FC<TickerChartProps> = ({
     candlestickChannel.onmessage = (event) => {
       const parsedData: CandlestickChannelData = JSON.parse(event.data);
       if (parsedData.from === "coinbase-http-worker") {
-        setData(parsedData.data);
+        setData(parsedData.data.data);
+        setChartState({
+          options: {
+            ...chartState.options,
+            annotations: {
+              ...chartState.options.annotations,
+              points: [
+                {
+                  x: parsedData.data.min.x,
+                  y: parsedData.data.min.y,
+                  marker: {
+                    size: 0,
+                  },
+                  label: {
+                    borderColor: "none",
+                    text: `$${parsedData.data.min.y.toLocaleString()}`,
+                    style: {
+                      color: "#FFFFFF",
+                      cssClass: "candlestick-chart-annotation-label",
+                      background: "none",
+                      border: "none",
+                    },
+                    offsetY: 43,
+                  },
+                },
+                {
+                  x: parsedData.data.max.x,
+                  y: parsedData.data.max.y,
+                  marker: {
+                    size: 0,
+                  },
+                  label: {
+                    borderColor: "none",
+                    text: `$${parsedData.data.max.y.toLocaleString()}`,
+                    style: {
+                      color: "#FFFFFF",
+                      cssClass: "candlestick-chart-annotation-label",
+                      background: "none",
+                      border: "none",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        });
         return setMarker(moment(parsedData.time).add(theInterval));
       }
       return null;

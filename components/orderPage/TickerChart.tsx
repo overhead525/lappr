@@ -8,6 +8,7 @@ import "./orderPageStyles.css";
 import Worker from "worker-loader!../../workers/coinbase-http-worker";
 import { fetchSymbolHistory } from "../shared/requests";
 import { GrainularitySelector } from "./GrainularitySelector";
+import { index } from "d3-array";
 
 export enum TickerChartTypes {
   smooth = "smooth",
@@ -35,6 +36,7 @@ export interface CandlestickChannelData {
  * [ time, low, high, open, close, volume ],
  */
 export type CandlestickData = number[];
+export type ConvertedCandlestickData = any[];
 
 export interface TickerChartProps {
   type: TickerChartTypes;
@@ -87,7 +89,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
       },
       tooltip: {
         marker: {
-          show: false,
+          show: true,
         },
         custom: ({
           series,
@@ -184,7 +186,12 @@ export const TickerChart: React.FC<TickerChartProps> = ({
 
   const loadTickerData = async () => {
     const cData = await fetchSymbolHistory(symbol, "1m");
-    setData(cData.data);
+    setData(
+      cData.data.map((val, index) => {
+        val[0] = index;
+        return val;
+      })
+    );
     setChartState({
       options: {
         ...chartState.options,
@@ -256,7 +263,12 @@ export const TickerChart: React.FC<TickerChartProps> = ({
     candlestickChannel.onmessage = (event) => {
       const parsedData: CandlestickChannelData = JSON.parse(event.data);
       if (parsedData.from === "coinbase-http-worker") {
-        setData(parsedData.data.data);
+        setData(
+          parsedData.data.data.map((val, index) => {
+            val[0] = index;
+            return val;
+          })
+        );
         setChartState({
           options: {
             ...chartState.options,

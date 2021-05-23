@@ -85,6 +85,95 @@ export const TickerChart: React.FC<TickerChartProps> = ({
       annotations: {
         points: [],
       },
+      tooltip: {
+        marker: {
+          show: false,
+        },
+        custom: ({
+          series,
+          seriesIndex,
+          dataPointIndex,
+          w,
+        }: {
+          series: number[][];
+          seriesIndex: number;
+          dataPointIndex: number;
+          w: {
+            globals: {
+              labels: number[];
+            };
+            config: {
+              series: { data: CandlestickData }[];
+            };
+          };
+        }) => {
+          const dataPoint = w.config.series[seriesIndex].data[dataPointIndex];
+          return `
+          <div class="tooltip-wrapper">
+            <div class="x">${moment()
+              .subtract(dataPointIndex, "minute")
+              .format("MMMM Do YYYY, h:mm a")}</div>
+            <div class="high data-row alt2">
+              <div>High</div>
+              <div>$${dataPoint[2].toLocaleString()}</div>
+            </div>
+            <div class="open data-row alt1">
+              <div>Open</div>
+              <div>$${dataPoint[3].toLocaleString()}</div>
+            </div>
+            <div class="close data-row alt2">
+              <div>Close</div>
+              <div>$${dataPoint[4].toLocaleString()}</div>
+            </div>
+            <div class="low data-row alt1">
+              <div>Low</div>
+              <div>$${dataPoint[1].toLocaleString()}</div>
+            </div>
+          </div>
+            <style>
+              div {
+                font-family: 'Inter', sans-serif;
+                font-weight: 500;
+              }
+
+              .x {
+                color: white;
+                background-color: #121212;
+                padding: 0.4vw 0.2vw;
+                margin-bottom: 0.4vw;
+              }
+
+              .alt1 {
+                background-color: #121212;
+                color: white;
+              }
+
+              .alt2 {
+                color: #121212;
+              }
+
+              .data-row {
+                position: relative;
+                padding: 0.1vw 0.2vw;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              }
+
+              .pipe-icon {
+                position: absolute;
+                width: 0.2vw;
+                height: 100%;
+                background-color: blue;
+              }
+
+              .pipe-icon, .high {
+
+              }
+            </style>
+          `;
+        },
+      },
     },
   });
 

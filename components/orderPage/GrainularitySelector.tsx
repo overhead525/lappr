@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 
 interface GrainularitySelectorProps {
-  // intervalStateUpdateFunction: Dispatch<SetStateAction<number>>;
+  intervalStateUpdateFunction: (...args) => void;
 }
 
 const StyledWrapper = styled.div`
@@ -30,11 +30,9 @@ const StyledText = styled(Typography)`
       : null}
 `;
 
-export const GrainularitySelector: React.FC<GrainularitySelectorProps> = (
-  {
-    // intervalStateUpdateFunction,
-  }
-) => {
+export const GrainularitySelector: React.FC<GrainularitySelectorProps> = ({
+  intervalStateUpdateFunction,
+}) => {
   const [hoverState, setHoverState] = useState({
     "1m": true,
     "5m": false,
@@ -48,6 +46,7 @@ export const GrainularitySelector: React.FC<GrainularitySelectorProps> = (
     const hoverStateCopy = { ...hoverState };
     Object.keys(hoverStateCopy).forEach((key) => (hoverStateCopy[key] = false));
     hoverStateCopy[e.currentTarget.textContent] = true;
+    intervalStateUpdateFunction(e.currentTarget.textContent);
     setHoverState(hoverStateCopy);
   };
 

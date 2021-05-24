@@ -56,6 +56,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
   );
   const [marker, setMarker] = useState(moment());
   const [theInterval, setTheInterval] = useState(60); // in seconds
+  const [grainularity, setGrainularity] = useState("5m");
   const [data, setData] = useState(null as CandlestickData[]);
   const [chartState, setChartState] = useState({
     options: {
@@ -110,10 +111,18 @@ export const TickerChart: React.FC<TickerChartProps> = ({
           };
         }) => {
           const dataPoint = w.config.series[seriesIndex].data[dataPointIndex];
+          const intervals = {
+            "1m": [dataPointIndex, "minute"],
+            "5m": [dataPointIndex * 5, "minute"],
+            "15m": [dataPointIndex * 15, "minute"],
+            "1hr": [dataPointIndex, "hour"],
+            "6hr": [dataPointIndex * 6, "hour"],
+            "1d": [dataPointIndex, "day"],
+          };
           return `
           <div class="tooltip-wrapper">
             <div class="x">${moment()
-              .subtract(dataPointIndex, "minute")
+              .subtract(intervals[grainularity][0], intervals[grainularity][1])
               .format("MMMM Do YYYY, h:mm a")}</div>
             <div class="high data-row alt2">
               <div>High</div>
@@ -185,9 +194,9 @@ export const TickerChart: React.FC<TickerChartProps> = ({
   };
 
   const loadTickerData = async () => {
-    const cData = await fetchSymbolHistory(symbol, "1m");
+    const cData = await fetchSymbolHistory(symbol, grainularity);
     setData(
-      cData.data.map((val, index) => {
+      cData.data.reverse().map((val, index) => {
         val[0] = index;
         return val;
       })
@@ -241,7 +250,10 @@ export const TickerChart: React.FC<TickerChartProps> = ({
 
   useEffect(() => {
     !data && loadTickerData();
-  }, []);
+    const chartTypeCopy = chartType;
+    setChartType(null);
+    setChartType(chartTypeCopy);
+  }, [grainularity]);
 
   useEffect(() => {
     const worker = new Worker();
@@ -253,7 +265,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
       candlestickChannel.postMessage(
         JSON.stringify({
           from: "tickerChart",
-          interval: "1m",
+          interval: grainularity,
           symbol: "BTC-USD",
           time: now,
         } as CandlestickMessageData)
@@ -264,7 +276,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
       const parsedData: CandlestickChannelData = JSON.parse(event.data);
       if (parsedData.from === "coinbase-http-worker") {
         setData(
-          parsedData.data.data.map((val, index) => {
+          parsedData.data.data.reverse().map((val, index) => {
             val[0] = index;
             return val;
           })
@@ -338,7 +350,7 @@ export const TickerChart: React.FC<TickerChartProps> = ({
           height="100%"
         />
       )}
-      <GrainularitySelector />
+      <GrainularitySelector intervalStateUpdateFunction={setGrainularity} />
     </div>
   );
 };

@@ -12,7 +12,6 @@ import {
 const candlestickChannel = new BroadcastChannel("candlestick");
 
 candlestickChannel.onmessage = async (event) => {
-  console.log("worker received message from tickerChart component");
   const parsedData: CandlestickMessageData = JSON.parse(event.data);
   if (parsedData.from === "tickerChart") {
     const data = await fetchSymbolHistory(
@@ -26,6 +25,9 @@ candlestickChannel.onmessage = async (event) => {
         time: moment().toISOString(),
       } as CandlestickChannelData)
     );
+  }
+  if (parsedData.from === "death") {
+    close();
   }
   return null;
 };

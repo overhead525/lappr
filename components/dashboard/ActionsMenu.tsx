@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import { useDispatch } from "react-redux";
+import { switchScreen } from "../../features/screen/screenSlice";
 
 export interface ActionsMenuProps {}
 
@@ -17,8 +19,14 @@ const StyledActionMenu = styled.div`
 `;
 
 export const ActionsMenu: React.FC<ActionsMenuProps> = () => {
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
+    dispatch(switchScreen("orderPage"));
+  };
+
   return (
-    <StyledActionMenu>
+    <StyledActionMenu onClick={handleClick}>
       <ArrowUpwardIcon color="inherit" />
     </StyledActionMenu>
   );

@@ -4,17 +4,13 @@ let marker = moment();
 
 const tickerChannel = new BroadcastChannel("ticker");
 
-console.log(`From worker: worker started at ${moment().format("HH:mm:ss")}`);
-
 function waitForSocketConnection(socket, callback) {
   setTimeout(function () {
     if (socket.readyState === 1) {
-      console.log("Connection is made");
       if (callback != null) {
         callback();
       }
     } else {
-      console.log("wait for connection...");
       waitForSocketConnection(socket, callback);
     }
   }, 5); // wait 5 milisecond for the connection...
@@ -23,7 +19,6 @@ function waitForSocketConnection(socket, callback) {
 function sendMessage(msg) {
   // Wait until the state of the socket is not ready and send the message when it is...
   waitForSocketConnection(coinbaseSocket, function () {
-    console.log("message sent!!!");
     coinbaseSocket.send(msg);
   });
 }
@@ -51,14 +46,9 @@ coinbaseSocket.onmessage = function (e) {
 
   const now = moment();
   if (now - marker >= 5000) {
-    console.log(`New marker set at ${now.format("hh:mm:ss")}`);
     marker = now;
   }
-};
-
-tickerChannel.onmessage = function (e) {
-  console.log("Worker: Message received from main script");
-  this.postMessage("sent back from worker");
+  if (JSON.parse(e.data).from === "death") this.close();
 };
 
 export default self;

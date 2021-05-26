@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export interface SymbolDisplayProps {
   cryptoLogoURL?: string;
-  symbol: string;
+  symbol?: string;
   invert: boolean;
 }
 
@@ -11,8 +11,8 @@ const StyledSymbolDisplay = styled.div`
   display: grid;
   place-items: center;
 
-  width: 43.8vw;
-  height: 43.8vw;
+  width: 36vw;
+  height: 36vw;
   margin-bottom: 9vw;
 
   background-color: #121212;
@@ -21,7 +21,7 @@ const StyledSymbolDisplay = styled.div`
 `;
 
 const StyledImage = styled.img`
-  width: 26.8vw;
+  width: 24vw;
   filter: invert(${(props) => (props.secondary ? 1 : 0)});
 `;
 
@@ -30,9 +30,19 @@ export const SymbolDisplay: React.FC<SymbolDisplayProps> = ({
   symbol,
   invert,
 }) => {
+  const logos = {
+    "BTC-USD": "/bitcoin-btc-logo.png",
+    "ETH-USD": "/ethereum-eth-logo.png",
+    "XLM-USD": "/stellar-xlm-logo.png",
+  };
+
   return (
     <StyledSymbolDisplay>
-      <StyledImage src={cryptoLogoURL} alt="Bitcoin Logo" secondary={invert} />
+      <StyledImage
+        src={logos[symbol]}
+        alt={symbol}
+        secondary={symbol === "XLM-USD" ? true : false}
+      />
       {/*<Image
         src={}
         alt={symbol}

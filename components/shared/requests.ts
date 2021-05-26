@@ -107,7 +107,6 @@ export const findMaxOfCandlestickDataArray = (
   const xCoord = candlestickDataArr[indexOfMax][0];
 
   const coords = { x: xCoord, y: maxPriceInPeriod };
-  console.log(coords);
   return coords;
 };
 
@@ -121,7 +120,6 @@ export const findMinOfCandlestickDataArray = (
   const xCoord = candlestickDataArr[indexOfMin][0];
 
   const coords = { x: xCoord, y: minPriceInPeriod };
-  console.log(coords);
   return coords;
 };
 

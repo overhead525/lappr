@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+// @ts-ignore
+import Worker from "worker-loader!../../workers/coinbase-socket-worker";
 
 export interface PriceDisplayProps {}
 
@@ -36,6 +38,20 @@ export const StyledCents = styled.div`
 export const PriceDisplay: React.FC<PriceDisplayProps> = () => {
   const [price, setPrice] = useState(48938.32);
   const [dollars, cents] = price.toFixed(2).split(".");
+  const [socketWorkerPresent, setSocketWorkerPresent] = useState(false);
+
+  useEffect(() => {
+    if (!socketWorkerPresent) {
+      new Worker();
+      setSocketWorkerPresent(true);
+    }
+
+    const tickerChannel = new BroadcastChannel("ticker");
+
+    tickerChannel.onmessage = (e) => {
+      setPrice(JSON.parse(e.data).price);
+    };
+  }, []);
 
   return (
     <StyledPriceDisplayWrapper>

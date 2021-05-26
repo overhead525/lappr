@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-
+// @ts-ignore
 import Worker from "worker-loader!../../workers/coinbase-socket-worker";
 
 export interface SymbolHeaderProps {
@@ -15,7 +15,7 @@ const StyledSymbolHeaderContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   font-family: "Inter", sans-serif;
   font-weight: 900;
   color: ${(props) => {
@@ -48,16 +48,7 @@ export const SymbolHeader: React.FC<SymbolHeaderProps> = ({
 
     const tickerChannel = new BroadcastChannel("ticker");
 
-    window.addEventListener("click", (e) => {
-      tickerChannel.postMessage({
-        from: "SymbolHeader",
-        message: "User just clicked in the window",
-      });
-      console.log("message posted to worker");
-    });
-
     tickerChannel.onmessage = (e) => {
-      console.log("Message received from worker", e.data);
       setPrice(JSON.parse(e.data).price);
     };
   }, []);

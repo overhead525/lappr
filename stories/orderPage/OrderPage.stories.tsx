@@ -1,7 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react";
 
-import { OrderPage, OrderPageProps } from "../../components/orderPage";
+import OrderPage, { OrderPageProps } from "../../components/orderPage";
 
 export default {
   title: "Order Page/OrderPageExample",

@@ -1,5 +1,5 @@
 import { Typography } from "@material-ui/core";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 
 interface GrainularitySelectorProps {
@@ -19,10 +19,10 @@ const StyledText = styled(Typography)`
   padding: 0.7vw 1.3vw;
   cursor: pointer;
 
-  color: rgba(255, 255, 255, ${(props) => (props.about ? 1 : 0.56)});
+  color: rgba(255, 255, 255, ${(props) => (props.on ? 1 : 0.56)});
 
   ${(props) =>
-    props.about
+    props.on
       ? `
       box-shadow: inset 0.3vw 0.3vw 1vw #000000, inset -0.3vw -0.3vw 1vw #202324;
       border-radius: 0.5vw;
@@ -34,64 +34,52 @@ export const GrainularitySelector: React.FC<GrainularitySelectorProps> = ({
   intervalStateUpdateFunction,
 }) => {
   const [hoverState, setHoverState] = useState({
-    "1m": true,
-    "5m": false,
-    "15m": false,
-    "1hr": false,
-    "6hr": false,
-    "1d": false,
+    "1m": "on",
+    "5m": null,
+    "15m": null,
+    "1hr": null,
+    "6hr": null,
+    "1d": null,
   });
 
   const handleClick = (e: React.MouseEvent) => {
     const hoverStateCopy = { ...hoverState };
-    Object.keys(hoverStateCopy).forEach((key) => (hoverStateCopy[key] = false));
-    hoverStateCopy[e.currentTarget.textContent] = true;
+    Object.keys(hoverStateCopy).forEach((key) => (hoverStateCopy[key] = null));
+    hoverStateCopy[e.currentTarget.textContent] = "on";
     intervalStateUpdateFunction(e.currentTarget.textContent);
     setHoverState(hoverStateCopy);
   };
 
   return (
     <StyledWrapper>
-      <StyledText
-        variant="caption"
-        about={hoverState["1m"]}
-        onClick={handleClick}
-      >
+      <StyledText variant="caption" on={hoverState["1m"]} onClick={handleClick}>
         1m
       </StyledText>
-      <StyledText
-        variant="caption"
-        about={hoverState["5m"]}
-        onClick={handleClick}
-      >
+      <StyledText variant="caption" on={hoverState["5m"]} onClick={handleClick}>
         5m
       </StyledText>
       <StyledText
         variant="caption"
-        about={hoverState["15m"]}
+        on={hoverState["15m"]}
         onClick={handleClick}
       >
         15m
       </StyledText>
       <StyledText
         variant="caption"
-        about={hoverState["1hr"]}
+        on={hoverState["1hr"]}
         onClick={handleClick}
       >
         1hr
       </StyledText>
       <StyledText
         variant="caption"
-        about={hoverState["6hr"]}
+        on={hoverState["6hr"]}
         onClick={handleClick}
       >
         6hr
       </StyledText>
-      <StyledText
-        variant="caption"
-        about={hoverState["1d"]}
-        onClick={handleClick}
-      >
+      <StyledText variant="caption" on={hoverState["1d"]} onClick={handleClick}>
         1d
       </StyledText>
     </StyledWrapper>

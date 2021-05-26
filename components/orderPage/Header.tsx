@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { ArrowLeftCircle, Grid } from "react-feather";
+import { switchScreen } from "../../features/screen/screenSlice";
+import { useDispatch } from "react-redux";
 
 export interface HeaderProps {
   symbol: string;
@@ -23,9 +25,25 @@ const StyledSymbolText = styled.div`
 `;
 
 export const Header: React.FC<HeaderProps> = ({ symbol }) => {
+  const dispatch = useDispatch();
+
+  const tickerChannel = new BroadcastChannel("ticker");
+  const candlestickChannel = new BroadcastChannel("candlestick");
+
+  const handleArrowLeftClick = () => {
+    tickerChannel.postMessage(JSON.stringify({ from: "death" }));
+    candlestickChannel.postMessage(JSON.stringify({ from: "death" }));
+    dispatch(switchScreen("dashboard"));
+  };
+
   return (
     <StyledHeaderWrapper>
-      <ArrowLeftCircle color="white" size="6vw" />
+      <ArrowLeftCircle
+        color="white"
+        size="6vw"
+        style={{ cursor: "grab" }}
+        onClick={handleArrowLeftClick}
+      />
       <StyledSymbolText>{symbol}</StyledSymbolText>
       <Grid color="white" size="6vw" />
     </StyledHeaderWrapper>

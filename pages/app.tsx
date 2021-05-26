@@ -1,9 +1,15 @@
 import Dashboard from "../components/dashboard";
+import OrderPage from "../components/orderPage";
 import { useSelector } from "react-redux";
 import { currentScreenSelector } from "../features/screen/screenSlice";
 
 const App = () => {
   const currentScreen = useSelector(currentScreenSelector);
+
+  const screens = {
+    dashboard: <Dashboard />,
+    orderPage: <OrderPage />,
+  };
 
   return (
     <div
@@ -18,7 +24,7 @@ const App = () => {
         placeItems: "center",
       }}
     >
-      {currentScreen ? currentScreen : <Dashboard />}
+      {screens[currentScreen] ? screens[currentScreen] : <Dashboard />}
     </div>
   );
 };

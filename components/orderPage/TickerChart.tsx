@@ -1,14 +1,12 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import Chart from "react-apexcharts";
-import "./orderPageStyles.css";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 // @ts-ignore
 import Worker from "worker-loader!../../workers/coinbase-http-worker";
 import { fetchSymbolHistory } from "../shared/requests";
 import { GrainularitySelector } from "./GrainularitySelector";
-import { index } from "d3-array";
 
 export enum TickerChartTypes {
   smooth = "smooth",
@@ -54,9 +52,12 @@ export const TickerChart: React.FC<TickerChartProps> = ({
   const [chartType, setChartType] = useState(
     "candlestick" as "line" | "candlestick"
   );
+  const [httpWorker, setHttpWorker] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [marker, setMarker] = useState(moment());
+  const [currentIntervalTimer, setCurrentIntervalTimer] = useState(null);
   const [theInterval, setTheInterval] = useState(60); // in seconds
-  const [grainularity, setGrainularity] = useState("5m");
+  const [grainularity, setGrainularity] = useState("1m");
   const [data, setData] = useState(null as CandlestickData[]);
   const [chartState, setChartState] = useState({
     options: {
@@ -112,12 +113,12 @@ export const TickerChart: React.FC<TickerChartProps> = ({
         }) => {
           const dataPoint = w.config.series[seriesIndex].data[dataPointIndex];
           const intervals = {
-            "1m": [dataPointIndex, "minute"],
-            "5m": [dataPointIndex * 5, "minute"],
-            "15m": [dataPointIndex * 15, "minute"],
-            "1hr": [dataPointIndex, "hour"],
-            "6hr": [dataPointIndex * 6, "hour"],
-            "1d": [dataPointIndex, "day"],
+            "1m": [23 - dataPointIndex, "minute"],
+            "5m": [(23 - dataPointIndex) * 5, "minute"],
+            "15m": [(23 - dataPointIndex) * 15, "minute"],
+            "1hr": [23 - dataPointIndex, "hour"],
+            "6hr": [(23 - dataPointIndex) * 6, "hour"],
+            "1d": [23 - dataPointIndex, "day"],
           };
           return `
           <div class="tooltip-wrapper">
@@ -197,7 +198,6 @@ export const TickerChart: React.FC<TickerChartProps> = ({
     const cData = await fetchSymbolHistory(symbol, grainularity);
     setData(
       cData.data.reverse().map((val, index) => {
-        val[0] = index;
         return val;
       })
     );
@@ -249,14 +249,26 @@ export const TickerChart: React.FC<TickerChartProps> = ({
   };
 
   useEffect(() => {
-    !data && loadTickerData();
-    const chartTypeCopy = chartType;
-    setChartType(null);
-    setChartType(chartTypeCopy);
+    const grainularityTable = {
+      "1m": 60,
+      "5m": 300,
+      "15m": 900,
+      "1hr": 3600,
+      "6hr": 21600,
+      "1d": 86400,
+    };
+
+    loadTickerData();
+    setTheInterval(grainularityTable[grainularity]);
+    clearInterval(currentIntervalTimer);
+    setCurrentIntervalTimer(null);
+    setLoading(true);
   }, [grainularity]);
 
   useEffect(() => {
-    const worker = new Worker();
+    if (!httpWorker) {
+      setHttpWorker(new Worker());
+    }
 
     const candlestickChannel = new BroadcastChannel("candlestick");
 
@@ -274,10 +286,10 @@ export const TickerChart: React.FC<TickerChartProps> = ({
 
     candlestickChannel.onmessage = (event) => {
       const parsedData: CandlestickChannelData = JSON.parse(event.data);
+      setLoading(false);
       if (parsedData.from === "coinbase-http-worker") {
         setData(
           parsedData.data.data.reverse().map((val, index) => {
-            val[0] = index;
             return val;
           })
         );
@@ -331,8 +343,9 @@ export const TickerChart: React.FC<TickerChartProps> = ({
       return null;
     };
 
-    setInterval(channelLogic, theInterval * 1000);
-  }, []);
+    !currentIntervalTimer &&
+      setCurrentIntervalTimer(setInterval(channelLogic, theInterval * 1000));
+  }, [currentIntervalTimer]);
 
   return (
     <div>

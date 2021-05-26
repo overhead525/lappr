@@ -5,6 +5,7 @@ import { symbolDisplays } from "../shared/components";
 import { Header } from "./Header";
 import { PriceDisplay } from "./PriceDisplay";
 import { TickerChart, TickerChartTypes } from "./TickerChart";
+import { SymbolDisplay } from "./SymbolDisplay";
 
 export interface OrderPageProps {}
 
@@ -13,17 +14,25 @@ const StyledOrderPageWrapper = styled(StyledScreenWrapper)`
   place-items: center;
 `;
 
-export const OrderPage: React.FC<OrderPageProps> = () => {
+const OrderPage: React.FC<OrderPageProps> = () => {
   const [state, setState] = useState({
-    symbol: "BTC-USD",
+    symbol: "ETH-USD",
   });
 
   return (
     <StyledOrderPageWrapper>
       <Header symbol={state.symbol} />
-      {symbolDisplays[state.symbol]}
-      <PriceDisplay />
+      <SymbolDisplay
+        cryptoLogoURL="/bitcoin-btc-logo.png"
+        invert={null}
+        symbol={state.symbol}
+      />
+      <div style={{ width: "100%" }}>
+        <PriceDisplay />
+      </div>
       <TickerChart type={TickerChartTypes.candles} symbol="BTC-USD" />
     </StyledOrderPageWrapper>
   );
 };
+
+export default OrderPage;
